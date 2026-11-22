@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="凌箭航天 SKYARROW —— 个人航天模拟创作者官网。任务档案、航天工具、轨道计算、火箭数据库，用 SFS 与 KSP 记录每一次点火。">
+    <title>凌箭航天 SKYARROW | 个人航天模拟创作者</title>
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ================= 开屏加载 ================= -->
+    <div class="loader" id="loader" aria-hidden="true">
+        <img src="assets/images/logo-white.png" alt="" class="loader-logo">
+        <p class="loader-text">点火准备中</p>
+        <div class="loader-bar"><i></i></div>
+    </div>
+
+    <!-- 顶部滚动进度条 -->
+    <div class="progress" id="progress"></div>
+
+    <!-- ================= 顶部导航 ================= -->
+    <header class="nav" id="nav">
+        <a href="#home" class="nav-logo-link" aria-label="凌箭航天 首页">
+            <img src="assets/images/logo-white.png" alt="凌箭航天 SKYARROW 标志" class="nav-logo">
+        </a>
+        <nav class="nav-menu" id="navMenu">
+            <a href="#archive">任务档案</a>
+            <a href="#tools">航天工具</a>
+            <a href="#timeline">时间线</a>
+            <a href="#square">弹幕广场</a>
+            <a href="#about">关于凌箭</a>
+        </nav>
+        <div class="nav-tools">
+            <button class="tool-btn" id="soundToggle" title="界面音效 (快捷键 S 之外：P)" aria-label="音效开关">♪</button>
+            <button class="tool-btn" id="searchBtn" title="搜索任务 (S)" aria-label="搜索">⌕</button>
+            <button class="nav-burger" id="navBurger" aria-label="打开菜单">
+                <span class="burger-label">菜单</span>
+                <span class="burger-icon"><i></i><i></i></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ================= 全屏菜单覆盖层 ================= -->
+    <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+        <nav class="menu-big">
+            <a href="#home" data-close>首页<span>HOME</span></a>
+            <a href="#cz7" data-close>长征七号<span>CZ-7 · 天舟夜射</span></a>
+            <a href="#cz8" data-close>长征八号<span>CZ-8 · 首飞复刻</span></a>
+            <a href="#mammoth" data-close>乳齿象发动机<span>KSP · 地面热试车</span></a>
+            <a href="#falcon9" data-close>猎鹰9号<span>FALCON 9 · 载人龙</span></a>
+            <a href="#lab" data-close>航天实验室<span>SPACE LAB · 10 TOOLS</span></a>
+            <a href="#sky" data-close>观星台<span>OBSERVATORY</span></a>
+            <a href="#archive" data-close>任务档案<span>MISSION ARCHIVE · 12</span></a>
+            <a href="#tools" data-close>航天工具<span>ORBIT · COMPARE · DB</span></a>
+            <a href="#games" data-close>训练中心<span>6 MINI GAMES</span></a>
+            <a href="#knowledge" data-close>航天文库<span>KNOWLEDGE BASE</span></a>
+            <a href="#timeline" data-close>创作时间线<span>TIMELINE</span></a>
+            <a href="#square" data-close>弹幕广场<span>DANMAKU SQUARE</span></a>
+            <a href="#community" data-close>凌箭驿站<span>COMMUNITY</span></a>
+            <a href="#dock" data-close>无限任务中心<span>GENERATIVE DOCK · ♾</span></a>
+            <a href="#about" data-close>关于凌箭<span>ABOUT</span></a>
+        </nav>
+        <div class="menu-foot">
+            <button class="linkline" data-modal="contact">联系方式</button>
+            <button class="linkline" data-modal="aboutsite">关于本站</button>
+            <button class="linkline" data-modal="changelog">更新日志</button>
+            <button class="linkline" data-quiz>航天小测验</button>
+            <button class="linkline" data-features>功能总览</button>
+            <button class="linkline" data-settings>个性设置</button>
+        </div>
+    </div>
+
+    <!-- ================= 右侧分区导航点 ================= -->
+    <div class="dots" id="dots" aria-label="分区导航">
+        <a href="#home"    data-dot="home"    title="首页"></a>
+        <a href="#cz7"     data-dot="cz7"     title="长征七号"></a>
+        <a href="#cz8"     data-dot="cz8"     title="长征八号"></a>
+        <a href="#mammoth" data-dot="mammoth" title="乳齿象发动机"></a>
+        <a href="#falcon9" data-dot="falcon9" title="猎鹰9号"></a>
+        <a href="#archive" data-dot="archive" title="任务档案"></a>
+        <a href="#tools"   data-dot="tools"   title="航天工具"></a>
+        <a href="#timeline" data-dot="timeline" title="创作时间线"></a>
+        <a href="#square"  data-dot="square"  title="弹幕广场"></a>
+        <a href="#about"   data-dot="about"   title="关于凌箭"></a>
+    </div>
+
+    <!-- 左下角分区 HUD -->
+    <div class="hud" id="hud"><b>01</b><span>首页</span></div>
+
+    <!-- 返回顶部 -->
+    <button class="totop" id="toTop" title="回到顶部 (T)" aria-label="回到顶部">↑</button>
+
+    <!-- ================= 01 首页 ================= -->
+    <section class="panel panel--hero" id="home">
+        <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
+        <div class="panel-veil"></div>
+        <div class="panel-inner">
+            <p class="panel-kicker reveal">个人航天模拟创作者官网 · SFS / KSP</p>
+            <h1 class="panel-title reveal">凌箭航天<br>SKYARROW</h1>
+            <div class="hero-badges reveal" aria-label="本站技术栈">
+                <span>index.html</span><span>style.css</span><span>main.js</span>
+            </div>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-goto="#archive">进入任务档案</button>
+                <button class="btn-line" data-modal="aboutsite">了解凌箭</button>
+                <button class="btn-line btn-line--accent" id="launchEgg">🚀 模拟点火</button>
+            </div>
+            <!-- 下次任务倒计时 -->
+            <div class="countdown reveal" id="countdown">
+                <p class="cd-label">下次模拟任务 · <b id="cdMission">长征五号B · 问天舱段</b></p>
+                <div class="cd-grid">
+                    <div><b id="cdD">--</b><span>天</span></div>
+                    <div><b id="cdH">--</b><span>时</span></div>
+                    <div><b id="cdM">--</b><span>分</span></div>
+                    <div><b id="cdS">--</b><span>秒</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-stats reveal">
+            <div><b data-count="28">0</b><span>模拟任务</span></div>
+            <div><b data-count="120">0</b><span>模拟发射</span></div>
+            <div><b data-count="36">0</b><span>入轨任务</span></div>
+            <div><b data-count="9">0</b><span>深空探测</span></div>
+        </div>
+        <a class="scroll-hint" href="#cz7" aria-label="下一分区"><i></i></a>
+    </section>
+
+    <!-- ================= 02 长征七号 ================= -->
+    <section class="panel panel--cz7" id="cz7">
+        <div class="panel-veil"></div>
+        <div class="panel-inner">
+            <p class="panel-kicker reveal">最新任务 · 已圆满成功</p>
+            <h2 class="panel-title reveal">长征七号<br>天舟夜射</h2>
+            <p class="panel-sub reveal">文昌夜色中的四塔点火，尾焰映亮整片发射场</p>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-modal="cz7">了解更多</button>
+                <button class="btn-line" data-lightbox="cz7">查看图集</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 03 长征八号 ================= -->
+    <section class="panel panel--cz8" id="cz8">
+        <div class="panel-veil"></div>
+        <div class="panel-inner">
+            <p class="panel-kicker reveal">可回收构型 · 首飞复刻</p>
+            <h2 class="panel-title reveal">长征八号<br>首飞任务</h2>
+            <p class="panel-sub reveal">海南文昌，新一代中型火箭的第一次点火</p>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-modal="cz8">了解更多</button>
+                <button class="btn-line" data-lightbox="cz8">查看图集</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 04 乳齿象发动机 ================= -->
+    <section class="panel panel--mammoth" id="mammoth">
+        <div class="panel-veil panel-veil--soft"></div>
+        <div class="panel-inner">
+            <img class="mammoth-fig reveal" src="assets/images/real/ksp-mammoth-quad.png" alt="乳齿象发动机 KS-25x4 官方渲染图">
+            <p class="panel-kicker reveal">KSP 专项 · 地面热试车</p>
+            <h2 class="panel-title reveal">乳齿象发动机<br>KS-25x4</h2>
+            <p class="panel-sub reveal">坎巴拉动力四喷管巨兽，全推力热试车极限测试</p>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-modal="mammoth">了解更多</button>
+                <button class="btn-line" data-lightbox="mammoth">查看图集</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 05 猎鹰9号 ================= -->
+    <section class="panel panel--falcon9" id="falcon9">
+        <div class="panel-veil"></div>
+        <div class="panel-inner">
+            <p class="panel-kicker reveal">载人任务 · 全流程演练</p>
+            <h2 class="panel-title reveal">猎鹰9号<br>载人龙飞船</h2>
+            <p class="panel-sub reveal">从一二级分离到龙飞船入轨对接的完整链路</p>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-modal="falcon9">了解更多</button>
+                <button class="btn-line" data-lightbox="falcon9">查看图集</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 06 任务档案 ================= -->
+    <section class="page" id="archive">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>任务档案</h2>
+                <p>MISSION ARCHIVE · 每一次模拟都值得存档</p>
+            </div>
+            <div class="arch-bar reveal">
+                <div class="arch-filters" id="archFilters">
+                    <button class="chip active" data-f="all">全部</button>
+                    <button class="chip" data-f="长征">长征系列</button>
+                    <button class="chip" data-f="猎鹰">猎鹰系列</button>
+                    <button class="chip" data-f="KSP">KSP 专项</button>
+                    <button class="chip" data-f="done">已完成</button>
+                    <button class="chip" data-f="soon">筹备中</button>
+                    <button class="chip" data-f="fav">★ 已收藏</button>
+                </div>
+                <input type="search" class="arch-search" id="archSearch" placeholder="搜索任务 / 火箭 / 模拟器…（快捷键 S）">
+            </div>
+            <div class="arch-grid" id="archGrid"></div>
+        </div>
+    </section>
+
+    <!-- ================= 07 航天工具 ================= -->
+    <section class="page page--tools" id="tools">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>航天工具箱</h2>
+                <p>ORBIT CALCULATOR · ROCKET COMPARE · ROCKET DB</p>
+            </div>
+
+            <div class="tool-grid">
+                <!-- 轨道计算器 -->
+                <div class="tool-card reveal" id="orbitTool">
+                    <h3>🛰 轨道计算器</h3>
+                    <p class="tool-tip">输入圆轨道高度，计算轨道速度与周期（地球参数）</p>
+                    <div class="tool-row">
+                        <input type="number" id="orbitAlt" value="400" min="0" max="100000" step="10">
+                        <span class="tool-unit">km</span>
+                        <button class="btn-line" id="orbitGo">计算</button>
+                    </div>
+                    <div class="tool-result" id="orbitOut">
+                        <div><span>轨道半径</span><b>-- km</b></div>
+                        <div><span>轨道速度</span><b>-- km/s</b></div>
+                        <div><span>轨道周期</span><b>-- min</b></div>
+                    </div>
+                </div>
+
+                <!-- 火箭对比 -->
+                <div class="tool-card reveal" id="compareTool">
+                    <h3>⚖ 火箭对比</h3>
+                    <p class="tool-tip">任选两枚火箭，参数逐项对比</p>
+                    <div class="tool-row">
+                        <select id="cmpA"></select>
+                        <em>VS</em>
+                        <select id="cmpB"></select>
+                    </div>
+                    <button class="btn-line" id="cmpGo">开始对比</button>
+                    <div class="cmp-table" id="cmpOut"></div>
+                </div>
+            </div>
+
+            <!-- 火箭参数库 -->
+            <div class="db-box reveal" id="dbBox">
+                <div class="db-bar">
+                    <h3>🗄 火箭参数库</h3>
+                    <input type="search" id="dbSearch" placeholder="搜索火箭 / 国家…">
+                </div>
+                <div class="db-scroll">
+                    <table class="db-table" id="dbTable">
+                        <thead>
+                            <tr>
+                                <th data-key="name">火箭 ⇅</th>
+                                <th data-key="nation">国家 ⇅</th>
+                                <th data-key="height">高度(m) ⇅</th>
+                                <th data-key="diameter">直径(m) ⇅</th>
+                                <th data-key="mass">起飞质量(t) ⇅</th>
+                                <th data-key="leo">LEO 运力(t) ⇅</th>
+                                <th data-key="status">状态 ⇅</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dbBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 07A 航天实验室 ================= -->
+    <section class="page" id="lab">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>航天实验室</h2>
+                <p>SPACE LAB · 十组即时计算工具，输入即出结果</p>
+            </div>
+            <div class="lab-grid" id="labGrid"></div>
+        </div>
+    </section>
+
+    <!-- ================= 07B 观星台 ================= -->
+    <section class="page page--sky" id="sky">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>观星台</h2>
+                <p>OBSERVATORY · 月相 / 星座 / 太阳系 / 流星雨</p>
+            </div>
+            <div class="moon-box reveal" id="moonBox"></div>
+            <div class="sky-sub reveal">
+                <h3>✦ 星座图鉴</h3>
+                <div class="sky-grid" id="constGrid"></div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 太阳系漫游</h3>
+                <div class="sky-grid" id="planetGrid"></div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 流星雨日历 <span class="sky-note">（点击月份筛选）</span></h3>
+                <div class="meteor-chips" id="meteorChips"></div>
+                <div class="db-scroll">
+                    <table class="db-table">
+                        <thead><tr><th>流星雨</th><th>极大期</th><th>ZHR</th><th>辐射点</th><th>母天体</th></tr></thead>
+                        <tbody id="meteorBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 08 创作时间线 ================= -->
+    <section class="page" id="timeline">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>创作时间线</h2>
+                <p>TIMELINE · 从第一枚纸火箭到这座官网</p>
+            </div>
+            <div class="tl">
+                <div class="tl-item reveal"><span class="tl-year">2016</span><div class="tl-body"><h4>初入 SFS</h4><p>第一次在航天模拟器里把箭体接错顺序，从此入坑。</p></div></div>
+                <div class="tl-item reveal"><span class="tl-year">2019</span><div class="tl-body"><h4>复刻系列开篇</h4><p>长征二号 F 与神舟飞船的第一次完整任务复刻。</p></div></div>
+                <div class="tl-item reveal"><span class="tl-year">2021</span><div class="tl-body"><h4>KSP 入坑</h4><p>被轨道力学毒打，开始认真计算转移窗口。</p></div></div>
+                <div class="tl-item reveal"><span class="tl-year">2023</span><div class="tl-body"><h4>夜射专项</h4><p>长征七号天舟夜射复刻，第一次打磨灯光与尾焰。</p></div></div>
+                <div class="tl-item reveal"><span class="tl-year">2024</span><div class="tl-body"><h4>乳齿象试车</h4><p>KSP 发动机试车专项开篇，推力曲线逐帧记录。</p></div></div>
+                <div class="tl-item reveal"><span class="tl-year">2026</span><div class="tl-body"><h4>官网 2.0 上线</h4><p>任务档案、航天工具箱、弹幕广场，全部装进三个文件。</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 08A 模拟训练中心 ================= -->
+    <section class="page page--games" id="games">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>模拟训练中心</h2>
+                <p>TRAINING CENTER · 六款航天小游戏，练出航天员手感</p>
+            </div>
+            <div class="game-tabs reveal" id="gameTabs">
+                <button class="chip active" data-game="lander">🚀 着陆挑战</button>
+                <button class="chip" data-game="memory">🃏 星空记忆</button>
+                <button class="chip" data-game="typing">⌨ 术语速打</button>
+                <button class="chip" data-game="react">⚡ 反应测试</button>
+                <button class="chip" data-game="g2048">🔢 星际 2048</button>
+                <button class="chip" data-game="mines">💣 碎片扫雷</button>
+            </div>
+            <div class="game-stage reveal" id="gameStage"></div>
+        </div>
+    </section>
+
+    <!-- ================= 08B 航天文库 ================= -->
+    <section class="page" id="knowledge">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>航天文库</h2>
+                <p>KNOWLEDGE BASE · 词典 / 冷知识 / 历史今天 / 结构解析</p>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 航天术语词典 <span class="sky-note">（20 条，点击看解释）</span></h3>
+                <input type="search" class="arch-search" id="termSearch" placeholder="搜索术语，如：停泊轨道…">
+                <div class="term-list" id="termList"></div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 太空冷知识 <span class="sky-note">（点击卡片翻面）</span></h3>
+                <div class="fact-grid" id="factGrid"></div>
+            </div>
+            <div class="kb-two">
+                <div class="sky-sub reveal">
+                    <h3>✦ 历史上的今天</h3>
+                    <div class="today-box" id="todayBox"></div>
+                </div>
+                <div class="sky-sub reveal">
+                    <h3>✦ 火箭结构解析 <span class="sky-note">（点击部件）</span></h3>
+                    <div class="part-grid" id="partGrid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 09 弹幕广场 + 每日星图 ================= -->
+    <section class="page page--square" id="square">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>弹幕广场</h2>
+                <p>DANMAKU SQUARE · 留言会化作弹幕飞过星空（保存在本机）</p>
+            </div>
+            <div class="dm-stage reveal" id="dmStage">
+                <p class="dm-hint" id="dmHint">发射一条弹幕试试 →</p>
+            </div>
+            <div class="dm-bar reveal">
+                <input type="text" id="dmInput" maxlength="40" placeholder="写下你想对凌箭说的话…">
+                <button class="btn-line" id="dmSend">发射弹幕</button>
+                <button class="btn-line" id="dmReplay">回放全部</button>
+                <button class="btn-line" id="dmClear">清空</button>
+            </div>
+
+            <div class="daily reveal" id="daily">
+                <div class="daily-img"><img id="dailyImg" src="" alt="每日星图"></div>
+                <div class="daily-info">
+                    <p class="panel-kicker">每日星图 · APOD 风格</p>
+                    <h3 id="dailyTitle">—</h3>
+                    <p id="dailyDesc"></p>
+                    <div class="panel-actions">
+                        <button class="btn-line" id="dailyBig">查看大图</button>
+                        <button class="btn-line" id="dailyNext">换一张</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 09A 凌箭驿站 ================= -->
+    <section class="page" id="community">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>凌箭驿站</h2>
+                <p>COMMUNITY · 留言 / 投票 / 点赞（全部保存在本机）</p>
+            </div>
+            <div class="kb-two">
+                <div class="sky-sub reveal">
+                    <h3>✦ 最爱火箭投票 <span class="sky-note">（每人一票）</span></h3>
+                    <div class="vote-box" id="voteBox"></div>
+                </div>
+                <div class="sky-sub reveal">
+                    <h3>✦ 点赞墙</h3>
+                    <div class="like-box" id="likeBox"></div>
+                </div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 留言板 <span class="sky-note">（署名可在下方昵称设置）</span></h3>
+                <div class="msg-form">
+                    <input type="text" id="msgName" maxlength="12" placeholder="昵称（可留空）">
+                    <input type="text" id="msgInput" maxlength="60" placeholder="给凌箭留一句话…">
+                    <button class="btn-line" id="msgSend">提交留言</button>
+                </div>
+                <div class="msg-list" id="msgList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 09B 无限任务中心 ================= -->
+    <section class="page page--dock" id="dock">
+        <div class="container">
+            <div class="section-head reveal">
+                <h2>无限任务中心</h2>
+                <p>GENERATIVE DOCK · 生成式功能空间：<b id="genTotal">计算中…</b></p>
+            </div>
+            <p class="dock-note reveal">
+                下面每个任务、每枚火箭、每个星系都由真实参数实时演算生成——组合数由选项数量相乘得出，不是写死的数字。每次点「随机/扫描/总装」结果都不同，可收入你的设计本。
+            </p>
+            <div class="sky-sub reveal">
+                <h3>✦ 发射点播台 <span class="sky-note">（点播博主拍发射视频 · 可自定义火箭名 · 发布后贴抖音链接）</span></h3>
+                <div class="launchpad" id="launchpad"></div>
+            </div>
+            <div class="gen-grid">
+                <div class="gen-card reveal" id="genMission"></div>
+                <div class="gen-card reveal" id="genSystem"></div>
+                <div class="gen-card gen-card--wide reveal" id="genRocket"></div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 我的设计本 <span class="sky-note">（本机保存，最多 40 条）</span></h3>
+                <div class="gen-book" id="genBook"></div>
+            </div>
+            <div class="sky-sub reveal">
+                <h3>✦ 成就墙 <span class="sky-note" id="achStat"></span></h3>
+                <div class="ach-grid" id="achGrid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 10 关于凌箭 ================= -->
+    <section class="panel panel--about" id="about">
+        <div class="panel-veil panel-veil--soft"></div>
+        <div class="panel-inner panel-inner--about">
+            <p class="panel-kicker reveal">ABOUT SKYARROW</p>
+            <h2 class="panel-title reveal">关于凌箭</h2>
+            <p class="about-text reveal">
+                一支箭，指向星空。在 <b>SFS 航天模拟</b>里复现真实火箭的建造与发射，
+                在<b>坎巴拉太空计划</b>里挑战更疯狂的轨道与着陆。
+                写实、克制、硬核 —— 尊重真实的火箭结构与轨道力学，
+                每一帧画面都来自游戏内的亲手搭建。
+            </p>
+            <div class="about-cards reveal">
+                <div class="about-card">
+                    <img class="about-logo" src="assets/images/logo.png" alt="凌箭航天标志">
+                    <h3>凌箭航天 SKYARROW</h3>
+                    <p>凌，是凌云之志；箭，是入轨之箭。</p>
+                </div>
+                <div class="about-card">
+                    <h3>SFS 航天模拟</h3>
+                    <p>Spaceflight Simulator<br>真实比例火箭建造 · 平面轨道力学</p>
+                    <button class="btn-line" data-goto="#cz7">看相关作品</button>
+                </div>
+                <div class="about-card">
+                    <h3>坎巴拉太空计划</h3>
+                    <p>Kerbal Space Program<br>硬核轨道运算 · 疯狂工程实验</p>
+                    <button class="btn-line" data-goto="#mammoth">看相关作品</button>
+                </div>
+            </div>
+            <div class="panel-actions reveal">
+                <button class="btn-line" data-modal="contact">联系方式</button>
+                <button class="btn-line" data-modal="aboutsite">关于本站</button>
+                <button class="btn-line" data-modal="changelog">更新日志</button>
+                <button class="btn-line" data-quiz>航天小测验</button>
+                <button class="btn-line btn-line--accent" data-features>🏅 功能总览</button>
+                <button class="btn-line" data-settings>⚙ 个性设置</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 页脚 ================= -->
+    <footer class="footer">
+        <div class="footer-cols">
+            <div class="fcol">
+                <h4>探索任务</h4>
+                <a href="#cz7">长征七号 · 天舟夜射</a>
+                <a href="#cz8">长征八号 · 首飞复刻</a>
+                <a href="#mammoth">乳齿象发动机 · 热试车</a>
+                <a href="#falcon9">猎鹰9号 · 载人龙</a>
+                <a href="#archive">全部任务档案</a>
+            </div>
+            <div class="fcol">
+                <h4>凌箭航天</h4>
+                <a href="#home">首页</a>
+                <a href="#tools">航天工具箱</a>
+                <a href="#lab">航天实验室</a>
+                <a href="#sky">观星台</a>
+                <a href="#games">模拟训练中心</a>
+                <a href="#community">凌箭驿站</a>
+                <button data-modal="contact">联系方式</button>
+                <button data-modal="changelog">更新日志</button>
+                <button data-features>功能总览</button>
+                <a href="admin.html">博主控制台</a>
+            </div>
+            <div class="fcol">
+                <h4>图片来源</h4>
+                <a href="https://images.nasa.gov" target="_blank" rel="noopener">NASA 图像库 ↗</a>
+                <a href="https://www.cmse.gov.cn" target="_blank" rel="noopener">中国载人航天 ↗</a>
+                <a href="https://www.spacechina.com" target="_blank" rel="noopener">中国航天科技集团 ↗</a>
+                <a href="https://wiki.kerbalspaceprogram.com" target="_blank" rel="noopener">KSP 官方 Wiki ↗</a>
+                <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels ↗</a>
+            </div>
+        </div>
+        <p class="footer-base">© 2026 凌箭航天 SKYARROW · 个人航天模拟创作 · 仅供学习交流 · 本站由 index.html + style.css + main.js 构建 · 北京时间 <b id="bjTime">--:--:--</b></p>
+    </footer>
+
+    <!-- ================= 任务详情弹窗 ================= -->
+    <div class="modal" id="modal" aria-hidden="true">
+        <div class="modal-mask" data-modal-close></div>
+        <div class="modal-panel" role="dialog" aria-modal="true">
+            <button class="modal-x" data-modal-close aria-label="关闭">×</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ================= 图集灯箱 ================= -->
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+        <div class="lightbox-mask" data-lb-close></div>
+        <button class="lb-x" data-lb-close aria-label="关闭">×</button>
+        <button class="lb-prev" id="lbPrev" aria-label="上一张">‹</button>
+        <figure class="lb-stage">
+            <img id="lbImg" src="" alt="图集大图">
+            <figcaption><span id="lbCap"></span><span id="lbNum"></span></figcaption>
+        </figure>
+        <button class="lb-next" id="lbNext" aria-label="下一张">›</button>
+        <a class="lb-dl" id="lbDl" download target="_blank" rel="noopener" title="下载原图">⬇ 原图</a>
+    </div>
+
+    <!-- ================= 搜索弹窗 ================= -->
+    <div class="modal" id="searchModal" aria-hidden="true">
+        <div class="modal-mask" data-sm-close></div>
+        <div class="modal-panel modal-panel--sm">
+            <button class="modal-x" data-sm-close aria-label="关闭">×</button>
+            <div class="modal-body">
+                <p class="m-kicker">SEARCH</p>
+                <h3 class="m-title">搜索任务档案</h3>
+                <input type="search" class="arch-search" id="globalSearch" placeholder="输入关键词，回车跳转…">
+                <div class="search-hits" id="searchHits"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模拟点火彩蛋层 -->
+    <div class="egg" id="egg" aria-hidden="true">
+        <div class="egg-rocket">🚀</div>
+        <div class="egg-smoke"></div>
+    </div>
+
+    <!-- 全局提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+

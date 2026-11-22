@@ -1,0 +1,36 @@
+{
+  "name": "skyarrow-boss",
+  "version": "1.0.0",
+  "private": true,
+  "description": "凌箭航天 · 博主接单台（桌面端）",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.skyarrow.boss",
+    "productName": "凌箭航天博主接单台",
+    "files": [
+      "electron-main.js",
+      "boss.html",
+      "js/boss.js",
+      "css/style.css",
+      "assets/images/favicon.png",
+      "assets/images/logo-white.png"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "portable": {
+      "artifactName": "凌箭航天博主接单台.exe"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
